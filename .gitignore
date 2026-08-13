@@ -1,0 +1,5 @@
+# Este repo no tiene build (solo yml de configuracion), pero se puede abrir con un IDE igual
+.idea/
+*.iml
+.vscode/
+.DS_Store
