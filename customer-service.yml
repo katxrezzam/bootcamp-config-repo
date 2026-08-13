@@ -1,0 +1,12 @@
+server:
+  port: 8081
+
+spring:
+  mongodb:
+    uri: mongodb://localhost:27017/customerdb
+  data:
+    mongodb:
+      # sin esto, @Indexed(unique = true) en Customer.documentNumber queda declarado pero
+      # Mongo nunca crea el indice: la unicidad dependeria solo del chequeo en el service,
+      # sin red de seguridad a nivel de base de datos ante una condicion de carrera.
+      auto-index-creation: true
