@@ -10,6 +10,16 @@ spring:
       # Mongo nunca crea el indice: la unicidad dependeria solo del chequeo en el service,
       # sin red de seguridad a nivel de base de datos ante una condicion de carrera.
       auto-index-creation: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        # no agregar el header con el nombre de clase del productor: los consumidores (ej.
+        # auth-service) tienen su propia copia del evento en su propio paquete, no tiene
+        # sentido que dependan de la clase interna de customer-service.
+        spring.json.add.type.headers: false
 
 eureka:
   client:

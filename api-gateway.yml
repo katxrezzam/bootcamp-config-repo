@@ -1,0 +1,13 @@
+auth:
+  jwt:
+    # D-Fase3: en un banco real esto vive en un vault/secrets manager, no en un repo Git en
+    # texto plano - se acepta aca por alcance de bootcamp (mismo criterio que el resto de la
+    # config "sensible" del proyecto, ninguna es un secreto real de produccion). Tiene que
+    # coincidir EXACTO con el de auth-service (el que firma) - unica fuente de verdad porque
+    # los dos lo leen del mismo config-server, no estan duplicados a mano en cada repo.
+    secret: "pqe65uJ3hfD926j1dW3mFHtq4ikR5GtOk_9NfjEc4pvRRROYzCLCwaqweQ-9Yq7R"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
