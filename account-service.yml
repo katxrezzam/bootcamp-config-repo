@@ -21,3 +21,20 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      customer-service:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        # 404 (cliente inexistente) es una respuesta de negocio normal, no una falla tecnica -
+        # si contara como falla, un id inventado terminaria abriendo el circuito para todos.
+        ignore-exceptions:
+          - com.bootcamp.accountservice.exception.CustomerNotFoundException
+  timelimiter:
+    instances:
+      customer-service:
+        timeout-duration: 2s
