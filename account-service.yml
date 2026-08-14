@@ -11,11 +11,24 @@ spring:
 customer-service:
   base-url: http://localhost:8081
 
+card-service:
+  base-url: http://localhost:8084
+
 bank:
   accounts:
+    # D8 (2026-08-14): ninguno de estos montos viene del enunciado, son parametros de negocio
+    # decididos con el usuario - por eso van todos en config, nunca hardcodeados en el codigo.
     savings:
-      # el enunciado no da un numero, se deja parametrizado en vez de hardcodeado en el codigo
-      max-monthly-movements: 5
+      vip:
+        min-daily-average: 500.00
+        avg-shortfall-fee: 15.00
+    checking:
+      maintenance-fee: 15.00
+    movements:
+      # limite uniforme para SAVINGS y CHECKING (Parte II); FIXED_TERM no usa esta clave, su
+      # propia regla de 1 movimiento/mes/dia fijo ya es mas estricta y nunca la superaria.
+      free-monthly-limit: 5
+      excess-fee: 5.00
 
 eureka:
   client:
@@ -37,7 +50,16 @@ resilience4j:
         # si contara como falla, un id inventado terminaria abriendo el circuito para todos.
         ignore-exceptions:
           - com.bootcamp.accountservice.exception.CustomerNotFoundException
+      # /cards/exists nunca devuelve 404 (responde true/false), no hace falta ignore-exceptions.
+      card-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
   timelimiter:
     instances:
       customer-service:
+        timeout-duration: 2s
+      card-service:
         timeout-duration: 2s
