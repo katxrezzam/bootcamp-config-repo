@@ -10,3 +10,8 @@ spring:
       # Mongo nunca crea el indice: la unicidad dependeria solo del chequeo en el service,
       # sin red de seguridad a nivel de base de datos ante una condicion de carrera.
       auto-index-creation: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

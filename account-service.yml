@@ -16,3 +16,8 @@ bank:
     savings:
       # el enunciado no da un numero, se deja parametrizado en vez de hardcodeado en el codigo
       max-monthly-movements: 5
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
