@@ -1,0 +1,69 @@
+server:
+  port: 8085
+
+customer-service:
+  base-url: http://localhost:8081
+
+account-service:
+  base-url: http://localhost:8082
+
+credit-service:
+  base-url: http://localhost:8083
+
+card-service:
+  base-url: http://localhost:8084
+
+report:
+  card:
+    # el enunciado pide "los ultimos 10" sin dar margen de configuracion, se deja parametrizado
+    # igual que el resto de los numeros que no vienen del enunciado (D8).
+    last-movements-limit: 10
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      customer-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        ignore-exceptions:
+          - com.bootcamp.reportservice.exception.CustomerNotFoundException
+      account-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+      credit-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+      card-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        # 404 (tarjeta inexistente en /last-movements) es una respuesta de negocio normal, no
+        # una falla tecnica - mismo criterio que CustomerNotFoundException en los otros clients.
+        ignore-exceptions:
+          - com.bootcamp.reportservice.exception.CardNotFoundException
+  timelimiter:
+    instances:
+      customer-service:
+        timeout-duration: 2s
+      account-service:
+        timeout-duration: 2s
+      credit-service:
+        timeout-duration: 2s
+      card-service:
+        timeout-duration: 2s
