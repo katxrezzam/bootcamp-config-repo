@@ -11,6 +11,9 @@ spring:
 customer-service:
   base-url: http://localhost:8081
 
+account-service:
+  base-url: http://localhost:8082
+
 eureka:
   client:
     service-url:
@@ -27,7 +30,19 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 3
         ignore-exceptions:
           - com.bootcamp.creditservice.exception.CustomerNotFoundException
+      account-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        # fondos insuficientes/cuenta inexistente/etc son respuestas de negocio normales de
+        # account-service, no fallas tecnicas - no deben abrir el circuito.
+        ignore-exceptions:
+          - com.bootcamp.creditservice.exception.AccountDebitRejectedException
   timelimiter:
     instances:
       customer-service:
+        timeout-duration: 2s
+      account-service:
         timeout-duration: 2s

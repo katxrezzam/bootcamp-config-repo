@@ -14,6 +14,9 @@ customer-service:
 card-service:
   base-url: http://localhost:8084
 
+credit-service:
+  base-url: http://localhost:8083
+
 bank:
   accounts:
     # D8 (2026-08-14): ninguno de estos montos viene del enunciado, son parametros de negocio
@@ -57,9 +60,18 @@ resilience4j:
         failure-rate-threshold: 50
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 3
+      # /credits/customers/{id}/has-overdue-debt tampoco tiene 404 de negocio, mismo criterio.
+      credit-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
   timelimiter:
     instances:
       customer-service:
         timeout-duration: 2s
       card-service:
+        timeout-duration: 2s
+      credit-service:
         timeout-duration: 2s
