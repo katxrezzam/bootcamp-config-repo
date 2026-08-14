@@ -27,6 +27,9 @@ resilience4j:
     instances:
       customer-service:
         sliding-window-size: 10
+        # el default de Resilience4j es 100 - sin esto, el circuito nunca llega a evaluarse con
+        # trafico bajo (encontrado probando de verdad con customer-service caido, no en el papel).
+        minimum-number-of-calls: 10
         failure-rate-threshold: 50
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 3
