@@ -10,6 +10,30 @@ spring:
     redis:
       host: localhost
       port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: account-service
+      # earliest: si account-service arranca por primera vez despues de que yanki-service ya
+      # publico solicitudes pendientes, tiene que procesarlas igual, no solo las nuevas.
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.bootcamp.accountservice.event
+        # yanki-service publica su PROPIA clase AccountOperationRequest (bounded context
+        # distinto) - mismo criterio que auth-service/customer-service: usa.type.headers=false
+        # fuerza a deserializar siempre contra la copia local (default.type), sin depender del
+        # nombre de clase del productor embebido en un header.
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.bootcamp.accountservice.event.AccountOperationRequest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        # yanki-service tiene su propia copia de AccountOperationResult, no depende de la clase
+        # interna de account-service (mismo criterio que customer-service -> auth-service).
+        spring.json.add.type.headers: false
 
 customer-service:
   base-url: http://localhost:8081

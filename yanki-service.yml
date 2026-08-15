@@ -7,6 +7,25 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: yanki-service
+      # earliest: al primer arranque tiene que leer TODO el historico de card.events y
+      # customer.events para poblar los directorios locales con lo que ya existia antes de que
+      # yanki-service arrancara por primera vez, no solo lo nuevo desde ahora.
+      auto-offset-reset: earliest
+      # OJO: no se configura value-deserializer/spring.json.* aca - yanki-service consume TRES
+      # tipos de evento (CardEvent, CustomerEvent, AccountOperationResult - Entrega 2), asi que
+      # la deserializacion se arma a mano en KafkaConsumerConfig (tres ConsumerFactory nombrados,
+      # uno por tipo) en vez de depender de un unico spring.json.value.default.type global.
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        # account-service tiene su propia copia de AccountOperationRequest, no depende de la
+        # clase interna de yanki-service (mismo criterio que customer-service -> auth-service).
+        spring.json.add.type.headers: false
 
 eureka:
   client:
