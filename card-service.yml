@@ -17,6 +17,9 @@ customer-service:
 credit-service:
   base-url: http://localhost:8083
 
+account-service:
+  base-url: http://localhost:8082
+
 cache:
   customer:
     ttl-seconds: 60
@@ -45,9 +48,23 @@ resilience4j:
         failure-rate-threshold: 50
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 3
+      # cuenta inexistente (alta de debito) es respuesta de negocio normal, no falla tecnica.
+      account-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        ignore-exceptions:
+          - com.bootcamp.cardservice.exception.AccountNotFoundException
+          # fondos insuficientes/limite de movimientos/etc en una compra con debito son
+          # respuestas de negocio normales de account-service, no fallas tecnicas.
+          - com.bootcamp.cardservice.exception.AccountDebitRejectedException
   timelimiter:
     instances:
       customer-service:
         timeout-duration: 2s
       credit-service:
+        timeout-duration: 2s
+      account-service:
         timeout-duration: 2s
