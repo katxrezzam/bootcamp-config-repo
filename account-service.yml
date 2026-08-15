@@ -7,6 +7,9 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
+    redis:
+      host: localhost
+      port: 6379
 
 customer-service:
   base-url: http://localhost:8081
@@ -16,6 +19,12 @@ card-service:
 
 credit-service:
   base-url: http://localhost:8083
+
+cache:
+  customer:
+    # D8 (2026-08-14): TTL corto sin invalidacion activa - el dato cacheado (nombre/documento)
+    # no es sensible a un minuto de desfasaje, no justifica sumar un consumer Kafka nuevo.
+    ttl-seconds: 60
 
 bank:
   accounts:
